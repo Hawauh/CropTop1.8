@@ -1,0 +1,11 @@
+ name: CropsTop
+ version: 1.0.0
+ description: Display who has broken the most crops
+ author: HarleySwtfus
+ main: me.harley.CropsTop.CropsTop
+ 
+ commands:
+   cropstop:
+     description: Main command
+     permission: cropstop.gui
+     usage: Incorrect usage of command! Are you using the right version?
