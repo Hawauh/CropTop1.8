@@ -1,20 +1,21 @@
-package me.harley.CropsTop;
+package me.harley.cropstop;
 
 import java.util.UUID;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import me.harley.manager.CropTopPlayer;
+
 public class Events implements Listener {
 
 	@EventHandler
 	public void onCropBreak(BlockBreakEvent e) {
 		UUID uuid = e.getPlayer().getUniqueId();
-		CropTopPlayer p = CropTopPlayer.getCropTopPlayer(uuid);
+		CropTopPlayer p = new CropTopPlayer().fromUuid(uuid);
 		Block block = e.getBlock();
 		switch (block.getType()) {
 		case CROPS:
@@ -25,7 +26,7 @@ public class Events implements Listener {
 			p.getStats().put("CACTUS", p.getStats().get("CACTUS") + getStack(block));
 			break;
 		case SUGAR_CANE_BLOCK:
-			p.getStats().put("SUGAR_CANE", p.getStats().get("SUGAR_CANE") + getStack(block));
+			p.getStats().put("SUGAR_CANE", p.getStats().get("SUGAR_CANE") + getStack(block) + 1);
 			break;
 		case PUMPKIN:
 			p.getStats().put("PUMPKIN", p.getStats().get("PUMPKIN") + 1);
@@ -46,16 +47,10 @@ public class Events implements Listener {
 		}
 	}
 
-	public int getStack(Block b) {
-		int amount = 0;
-		if (b.getType() == Material.SUGAR_CANE || b.getType() == Material.CACTUS) {
-			for (int i = 0; i < b.getWorld().getHighestBlockYAt(b.getLocation()); i++) {
-				Block block = b.getRelative(BlockFace.UP, i);
-				if (block.getType() == b.getType()) {
-					amount++;
-				}
-			}
-		}
-		return amount;
+	private int getStack(Block block) {
+		final Block top = block.getRelative(BlockFace.UP);
+		if (top.getType() == block.getType())
+			return getStack(top) + 1;
+		return 0;
 	}
 }

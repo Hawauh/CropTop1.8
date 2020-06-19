@@ -1,4 +1,4 @@
-package me.harley.CropsTop;
+package me.harley.cropstop;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,46 +6,46 @@ import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.harley.inventory.CropCatergoryInventory;
-import me.harley.inventory.Top9Inventory;
+import me.harley.display.CropCategoryInventory;
+import me.harley.display.TopPlayersInventory;
+import me.harley.manager.CropsTopCmd;
+import me.harley.manager.ManageData;
 
 public class CropsTop extends JavaPlugin {
 
+	public FileConfiguration data;
+	public File dfile;
+
+	ManageData manageData;
+
 	public void onEnable() {
-		System.out.println("[CropsTop] Enabled!");
+		//Bukkit.getLogger().log(Level.INFO, "=======================================");
 		saveDefaultConfig();
 		reloadConfig();
 
 		getCommand("cropstop").setExecutor(new CropsTopCmd());
 
-		getServer().getPluginManager().registerEvents(new CropCatergoryInventory(), this);
-		getServer().getPluginManager().registerEvents(new Top9Inventory(), this);
+		getServer().getPluginManager().registerEvents(new CropCategoryInventory(), this);
+		getServer().getPluginManager().registerEvents(new TopPlayersInventory(), this);
 		getServer().getPluginManager().registerEvents(new Events(), this);
-		getServer().getPluginManager().registerEvents(SetupData.inst(), this);
+		getServer().getPluginManager().registerEvents(new ManageData(), this);
 
-		setup(this);
-		SetupData.inst().registerPlayers();
+		ManageData manageData = ManageData.inst();
 
+		setup();
+		manageData.startAutoSave();
+		//Bukkit.getLogger().log(Level.INFO, "=======================================");
 	}
 
-	public void onDisable() {
-
-	}
-
-	FileConfiguration data;
-
-	File dfile;
-
-	public void setup(Plugin plugin) {
-		dfile = new File(plugin.getDataFolder(), "data.yml");
+	private void setup() {
+		dfile = new File(this.getDataFolder(), "data.yml");
 		if (!dfile.exists())
 			try {
 				dfile.createNewFile();
 			} catch (IOException e) {
-				Bukkit.getServer().getLogger().severe("Could not create data.yml!");
+				Bukkit.getServer().getLogger().severe("Error while creating data.yml!");
 			}
 		data = YamlConfiguration.loadConfiguration(dfile);
 	}

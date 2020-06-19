@@ -1,4 +1,4 @@
-package me.harley.CropsTop;
+package me.harley.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +10,18 @@ import org.bukkit.entity.Player;
 
 public class CropTopPlayer {
 
-	static List<CropTopPlayer> players = new ArrayList<CropTopPlayer>();
-	SetupData data = SetupData.inst();
+	private ManageData data = ManageData.inst();
+	private static List<CropTopPlayer> players = new ArrayList<CropTopPlayer>();
+	public static List<CropTopPlayer> getPlayers() {
+		return players;
+	}
 
 	private UUID uuid;
 	private HashMap<String, Integer> stats;
 
 	public CropTopPlayer(UUID uuid, HashMap<String, Integer> stats, int sugarcaneCount, int cactusCount, int wheatCount, int pumpkinCount,
 			int melonCount, int carrotCount, int potatoCount) {
-		this.setUuid(uuid);
-		this.setStats(stats);
+		setUuid(uuid);
 		stats.put("SUGAR_CANE", sugarcaneCount);
 		stats.put("CACTUS", cactusCount);
 		stats.put("WHEAT", wheatCount);
@@ -27,8 +29,12 @@ public class CropTopPlayer {
 		stats.put("MELON", melonCount);
 		stats.put("CARROT", carrotCount);
 		stats.put("POTATO", potatoCount);
+		setStats(stats);
+		getPlayers().add(this);
 		this.saveToFile();
-		players.add(this);
+	}
+
+	public CropTopPlayer() {
 	}
 
 	public void saveToFile() {
@@ -58,8 +64,8 @@ public class CropTopPlayer {
 		this.stats = stats;
 	}
 
-	public static CropTopPlayer getCropTopPlayer(UUID uuid) {
-		for (CropTopPlayer players : players) {
+	public CropTopPlayer fromUuid(UUID uuid) {
+		for (CropTopPlayer players : getPlayers()) {
 			if (players.getUuid().equals(uuid)) {
 				return players;
 			}
@@ -67,9 +73,17 @@ public class CropTopPlayer {
 		return null;
 	}
 
-	public static Player getPlayer(CropTopPlayer cropTopPlayer) {
+	public Player getPlayer(CropTopPlayer cropTopPlayer) {
 		return Bukkit.getPlayer(cropTopPlayer.getUuid());
 
+	}
+
+	public Player getPlayer() {
+		return Bukkit.getPlayer(this.getUuid());
+
+	}
+
+	public void unregister() {
 	}
 
 }

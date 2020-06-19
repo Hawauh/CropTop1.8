@@ -2,7 +2,7 @@
  version: 1.0.0
  description: Display who has broken the most crops
  author: HarleySwtfus
- main: me.harley.CropsTop.CropsTop
+ main: me.harley.cropstop.CropsTop
  
  commands:
    cropstop:
